@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "cd33046c-9426-4dee-8c8b-1381b58b767b",
+		"name": "UploadAssetService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create new asset",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d4da9b17-6694-4a9b-a7e1-e5de02cb6161",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var data = JSON.parse(responseBody);",
+							"pm.environment.set(\"assetId\", data.id);",
+							"pm.environment.set(\"uploadUrl\", data.upload_url);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/asset",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"asset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload file to S3 URL",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "New file content"
+				},
+				"url": {
+					"raw": "{{uploadUrl}}",
+					"host": [
+						"{{uploadUrl}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update asset status",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"Status\": \"uploaded\"}"
+				},
+				"url": {
+					"raw": "{{host}}/asset/{{assetId}}?",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"asset",
+						"{{assetId}}"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get url for download",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "689fc9bb-d0a1-4839-a35d-745ec5359b3e",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"var data = JSON.parse(responseBody);",
+							"pm.environment.set(\"downloadUrl\", data.Download_url);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/asset/{{assetId}}?timeout=50",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"asset",
+						"{{assetId}}"
+					],
+					"query": [
+						{
+							"key": "timeout",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download file from S3 URL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{downloadUrl}}",
+					"host": [
+						"{{downloadUrl}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

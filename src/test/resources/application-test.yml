@@ -1,0 +1,8 @@
+logging:
+  level:
+    root: info
+
+s3:
+  accessKey: accessKey
+  secretKey: secretKey
+  region: region
